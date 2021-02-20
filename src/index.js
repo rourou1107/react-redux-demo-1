@@ -1,17 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
+import {createStore} from 'redux'
+const counter = (state, action) => {
+    state = state || 0
+    if(action.type === 'add') {
+        return state + action.payload
+    } else {
+        return state
+    }
+}
+const store = createStore(counter)
+function addAsync() {
+    setTimeout(() => {
+        store.dispatch({type: 'add', payload: 1})
+    }, 2000)
+}
+function addOdd() {
+    if (store.getState() % 2 === 1) {
+        store.dispatch({type: 'add', payload: 1})
+    }
+}
+function render() {
+    ReactDOM.render(<App value={store.getState()}
+                         add={() => {store.dispatch({type: 'add', payload: 1})}}
+                         add2={() => {store.dispatch({type: 'add', payload: 2})}}
+                         addAsync={addAsync}
+                         addOdd={addOdd}/>, document.getElementById('root'));
+}
+render()
+store.subscribe(render)
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
